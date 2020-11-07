@@ -1,0 +1,24 @@
+.vscode
+
+# output testing
+files/
+
+
+# creator tools
+creator-tools/out
+
+
+# node
+nodejs/.vscode
+nodejs/node_modules
+nodejs/repos.json
+nodejs/settings.json
+
+
+## material design testing
+node
+
+
+# C++
+C++/.vscode
+C++/build
