@@ -22,7 +22,9 @@ jobs:
         uses: actions/checkout@v2
       
       - name: Install conan
-        run: choco install conan
+        run: |
+          choco install conan
+          refreshenv
       
       - name: Build with Cmake
         run: |
