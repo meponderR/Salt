@@ -25,6 +25,7 @@ jobs:
         run: |
           choco install conan
           refreshenv
+        shell: cmd
       
       - name: Build with Cmake
         run: |
@@ -34,6 +35,7 @@ jobs:
           conan install ..
           cmake .. -G "Visual Studio 16 2019"
           cmake .. --config release --target ALL_BUILD
+        shell: cmd
           
           
       - name: Upload Windows Executable
