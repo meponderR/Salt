@@ -23,7 +23,7 @@ jobs:
       
       - name: Install conan
         run: |
-          choco install conan
+          choco install conan -y
           refreshenv
         shell: cmd
       
@@ -33,8 +33,9 @@ jobs:
           mkdir build
           cd build
           conan install ..
-          cmake .. -G "Visual Studio 16 2019"
-          cmake .. --config release --target ALL_BUILD
+          cd ..
+          cmake -B ./build
+          cmake --build ./build --config Release
         shell: cmd
           
           
