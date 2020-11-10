@@ -1,5 +1,4 @@
 const fs = require("fs");
-const prompt = require('prompt-sync')();
 const decodeUriComponent = require('decode-uri-component');
 
 var urlarray = fs.readFileSync('out/urls.txt').toString().split("\n");
@@ -12,7 +11,7 @@ var baseURL = urlsJ[0];
 
 var myArgs = process.argv.slice(2);
 
-const system = myArgs[0]
+const system = myArgs[0];
 
 var newJSON = {};
 newJSON[system] = {};
