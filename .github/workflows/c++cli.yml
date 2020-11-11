@@ -21,7 +21,6 @@ jobs:
       
       - name: Conan
         run: |
-          cd C++
           mkdir build
           cd build
           conan install ..
@@ -31,8 +30,8 @@ jobs:
       
       - name: Build with Cmake
         run: |
-          cmake -B ./build
-          cmake --build ./build --config Release
+          cmake -B ./build -T host=x64 -A win32
+          cmake --build ./build --config Release 
         shell: cmd
         working-directory: ./C++/
           
