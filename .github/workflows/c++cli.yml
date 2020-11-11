@@ -16,7 +16,7 @@ jobs:
     
       - name: Install Conan
         run: |
-          pip install conan
+          pip3 install conan
         shell: cmd
       
       - name: Conan
