@@ -17,6 +17,7 @@ jobs:
       - name: Install Conan
         run: |
           pip3 install conan
+          echo "::add-path::/home/runner/.local/bin"
         shell: cmd
       
       - name: Conan
