@@ -14,7 +14,7 @@ json getJsonRepoList(bool failIfNonExistent)
     {
         if (failIfNonExistent)
         {
-            std::cout << "Repo file does not exist. Refer to the readme to add a repo." << std::endl;
+            std::cout << "Repo file does not exist. Please add a repo with \"gapt repo add <name> <url> <type>\"." << std::endl;
             exit(0);
         }
         json blankOutput = {};
@@ -31,8 +31,6 @@ json getJsonRepoList(bool failIfNonExistent)
 
 int addGaptRepo(std::string repoName, std::string repoURL, std::string repoType)
 {
-    std::cout << repoName << std::endl << repoURL << std::endl;
-
     json repoInfo = {};
     repoInfo["url"] = repoURL;
 

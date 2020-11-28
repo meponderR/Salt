@@ -9,20 +9,22 @@
 
 using namespace std;
 
+//write to string function
 size_t curlWriteToStringFunction(void *ptr, size_t size, size_t nmemb, string *outputString)
 {
     outputString->append(static_cast<char *>(ptr), size * nmemb);
     return size * nmemb;
 }
 
+//write to file function
 static size_t curlWriteToFileFunction(void *ptr, size_t size, size_t nmemb, void *stream)
 {
     size_t written = fwrite(ptr, size, nmemb, (FILE *)stream);
     return written;
 }
 
-int progress_func(void *ptr, double TotalToDownload, double NowDownloaded,
-                  double TotalToUpload, double NowUploaded)
+//simple progress function
+int progress_func(void *ptr, double TotalToDownload, double NowDownloaded, double TotalToUpload, double NowUploaded)
 {
     // ensure that the file to be downloaded is not empty
     // because that would cause a division by zero error later on
@@ -32,7 +34,7 @@ int progress_func(void *ptr, double TotalToDownload, double NowDownloaded,
     }
 
     // how wide you want the progress meter to be
-    int totaldotz = 40;
+    int totaldotz = 50;
     double fractiondownloaded = NowDownloaded / TotalToDownload;
     // part of the progressmeter that's already "full"
     int dotz = (int)round(fractiondownloaded * totaldotz);
@@ -57,32 +59,44 @@ int progress_func(void *ptr, double TotalToDownload, double NowDownloaded,
     return 0;
 }
 
-string downloadToString(string url)
+string downloadToString(string url, std::string name)
 {
     std::string outputString;
 
     CURL *curl = curl_easy_init();
     if (curl)
     {
-
+        //set url
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+
+        //redirect
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+
+        //write to string
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlWriteToStringFunction);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &outputString);
-        curl_easy_setopt(curl, CURLOPT_CAINFO, "./curl-ca-bundle.crt");
-        curl_easy_setopt(curl, CURLOPT_CAPATH, "./curl-ca-bundle.crt");
-        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-        //curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
+
+        //progress
         curl_easy_setopt(curl, CURLOPT_NOPROGRESS, false);
         curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_func);
+
+//temporarily disable tls
+#if defined(windows)
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+#endif
+
+//verbose
+#if defined(verbose)
+        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
+#endif
 
         CURLcode res = curl_easy_perform(curl);
 
         if (res != CURLE_OK)
         {
-            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+            fprintf(stderr, string("Downloading repo, \"" + name + "\" failed: %s\n").c_str(), curl_easy_strerror(res));
         }
 
-        /* always cleanup */
         curl_easy_cleanup(curl);
     }
 
@@ -104,43 +118,58 @@ int downloadToFile(string url, string name, string type)
     static const char *pagefilename = filePath.c_str();
     FILE *pagefile;
 
+    //global init
     curl_global_init(CURL_GLOBAL_ALL);
 
     /* init the curl session */
     curl = curl_easy_init();
 
+    //set url
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlWriteToFileFunction);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &pagefile);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYSTATUS, 0);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, false);
+
+    //redirect
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-    //curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
+
+    //write to file
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlWriteToFileFunction);
+
+    //progress
     curl_easy_setopt(curl, CURLOPT_NOPROGRESS, FALSE);
     //curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_func);
+
+//temporarily disable tls
+#if defined(windows)
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+#endif
+
+//verbose
+#if defined(verbose)
+    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
+#endif
 
     fopen_s(&pagefile, pagefilename, "wb");
     if (pagefile)
     {
 
-        /* write the page body to this file handle */
+        //pass file to function
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, pagefile);
 
-        /* get it! */
+        //reqest
         CURLcode res = curl_easy_perform(curl);
 
         if (res != CURLE_OK)
         {
-            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+            fprintf(stderr, string("Downloading file, \"" + name + "\" failed: %s\n").c_str(), curl_easy_strerror(res));
         }
 
-        /* close the header file */
+        //close file
         fclose(pagefile);
     }
 
-    /* cleanup curl stuff */
+    //cleanup
     curl_easy_cleanup(curl);
 
+    //global cleanup
     curl_global_cleanup();
 
     return 0;
