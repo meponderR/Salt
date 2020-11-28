@@ -1,5 +1,4 @@
-
-name: C++
+name: C++ CLI
 
 on:
   push:
@@ -14,24 +13,28 @@ jobs:
     steps:
       - name: Checkout Source
         uses: actions/checkout@v2
+    
+      - name: Install Conan
+        run: |
+          pip3 install conan
+          echo "::add-path::/home/runner/.local/bin"
+        shell: cmd
       
       - name: Conan
         run: |
-          choco install conan -y
-          refreshenv
-
-          cd C++
           mkdir build
           cd build
           conan install ..
           cd ..
         shell: cmd
+        working-directory: ./C++/
       
       - name: Build with Cmake
         run: |
-          cmake -B ./build
-          cmake --build ./build --config Release
+          cmake -B ./build -T host=x64 -A win32
+          cmake --build ./build --config Release 
         shell: cmd
+        working-directory: ./C++/
           
           
       - name: Upload Windows Executable
