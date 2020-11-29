@@ -63,6 +63,7 @@ int main(int argc, char *argv[])
 			 //repo remove
 			 << "  mkconfig outputDir <path> - "
 			 << "Set output directory" << endl;
+		exit(0);
 	}
 
 	//list files

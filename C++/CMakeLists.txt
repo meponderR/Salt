@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10.0)
-project( "gapt" VERSION "0.1.1" LANGUAGES CXX)
-set("GAPT_VERSION" "Beta 1.1")
+project( "gapt" VERSION "0.1.1.1" LANGUAGES CXX)
+set("GAPT_VERSION" "Beta 1.1.1")
 
 #include(CTest)
 #enable_testing()
@@ -43,13 +43,10 @@ if(WIN32 OR WIN64 AND NOT MINGW)
 elseif(MINGW)
     target_link_libraries(${PROJECT_NAME} -lcurl)
     set(DCMAKE_SH="CMAKE_SH-NOTFOUND")
-
 elseif(UNIX AND NOT APPLE)
     add_definitions(-Dunix)
     target_link_libraries(${PROJECT_NAME} -lcurl)
 elseif(APPLE)
     add_definitions(-Dapple)
-
-    # link conan
-    target_link_libraries(${PROJECT_NAME} ${CONAN_LIBS})
+    target_link_libraries(${PROJECT_NAME} -lcurl)
 endif()

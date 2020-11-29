@@ -7,6 +7,10 @@
 #include <math.h>
 #include <settingsToolkit.hpp>
 
+#ifdef __unix
+#define fopen_s(pFile,filename,mode) ((*(pFile))=fopen((filename),  (mode)))==NULL
+#endif
+
 using namespace std;
 
 //write to string function
@@ -134,7 +138,7 @@ int downloadToFile(string url, string name, string type)
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlWriteToFileFunction);
 
     //progress
-    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, FALSE);
+    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, false);
     //curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_func);
 
 //temporarily disable tls

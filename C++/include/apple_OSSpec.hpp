@@ -1,6 +1,15 @@
+#pragma once
 #include <string>
+#include <filesystem>
 
 std::string getGAPTSettingsPath()
 {
-    return "~/Library/gapt";
+    std::string settingsPath = std::string(getenv("HOME")) + std::string("/Library/gapt/");
+
+    if (!(std::filesystem::exists(settingsPath)))
+    {
+        std::filesystem::create_directories(settingsPath);
+    }
+    
+    return settingsPath;
 }
