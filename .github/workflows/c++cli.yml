@@ -64,8 +64,8 @@ jobs:
         working-directory: ./C++/build
           
           
-      - name: Upload Windows Executable
+      - name: Upload Linux Executable
         uses: actions/upload-artifact@v2.2.0
         with:
-          name: Windows x64
+          name: Linux
           path: ./C++/build/gapt
