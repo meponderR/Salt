@@ -51,7 +51,7 @@ jobs:
       
       - name: Install dependecies
         run: |
-          apt install libcurl
+          sudo apt install libcurl
         shell: bash
         working-directory: ./C++/
       
