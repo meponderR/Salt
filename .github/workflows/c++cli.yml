@@ -51,11 +51,11 @@ jobs:
       
       - name: Install dependecies
         run: |
-          sudo apt install libcurl
+          sudo apt install libcurl4-openssl-dev
         shell: bash
         working-directory: ./C++/
       
-      - name: Build with Cmake
+      - name: Build
         run: |
           cmake ..
           make
@@ -67,4 +67,4 @@ jobs:
         uses: actions/upload-artifact@v2.2.0
         with:
           name: Windows x64
-          path: ./C++/build/bin/gapt.exe
+          path: ./C++/build/gapt
