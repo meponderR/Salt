@@ -42,3 +42,29 @@ jobs:
         with:
           name: Windows x64
           path: ./C++/build/bin/gapt.exe
+  Linux:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v2
+      
+      - name: Install dependecies
+        run: |
+          apt install libcurl
+        shell: bash
+        working-directory: ./C++/
+      
+      - name: Build with Cmake
+        run: |
+          cmake ..
+          make
+        shell: bash
+        working-directory: ./C++/build
+          
+          
+      - name: Upload Windows Executable
+        uses: actions/upload-artifact@v2.2.0
+        with:
+          name: Windows x64
+          path: ./C++/build/bin/gapt.exe
