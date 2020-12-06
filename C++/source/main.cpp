@@ -70,9 +70,8 @@ int main(int argc, char *argv[])
 	if (string(argv[1]) == "list")
 	{
 		string platform = argv[2];
-		json repos = gaptToolkit::getCachedFileList();
-		json repo = repos["games"][platform];
-		for (auto &fileData : repo.items())
+		json games = gaptToolkit::getCachedPlatformedGameList(platform);
+		for (auto &fileData : games.items())
 		{
 			auto name = fileData.key();
 			cout << name << endl;
@@ -99,11 +98,9 @@ int main(int argc, char *argv[])
 		}
 		transform(searchTerm.begin(), searchTerm.end(), searchTerm.begin(), ::toupper);
 
-		json repos = gaptToolkit::getCachedFileList();
+		json games = gaptToolkit::getCachedPlatformedGameList(platform);
 
-		json repo = repos["games"][platform];
-
-		for (auto &fileData : repo.items())
+		for (auto &fileData : games.items())
 		{
 			string name = fileData.key();
 			string upperName = name;
@@ -126,13 +123,19 @@ int main(int argc, char *argv[])
 	//download file
 	else if (string(argv[1]) == "get")
 	{
+		cout << "geting file" << endl;
 		gaptToolkit::downloadFile(argv[2], argv[3]);
 	}
 
 	//repo managment
 	else if (string(argv[1]) == "repo")
 	{
-		if (string(argv[2]) == "add")
+		if (string(argv[2]) == "info")
+		{
+			removeGaptRepo(argv[3]);
+			gaptToolkit::cacheFileList();
+		}
+		else if (string(argv[2]) == "add")
 		{
 			addGaptRepo(argv[3], argv[4], "");
 			gaptToolkit::cacheFileList();

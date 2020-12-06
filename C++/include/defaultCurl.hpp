@@ -11,10 +11,10 @@
 #define fopen_s(pFile,filename,mode) ((*(pFile))=fopen((filename),  (mode)))==NULL
 #endif
 
-using namespace std;
+//using namespace std;
 
 //write to string function
-size_t curlWriteToStringFunction(void *ptr, size_t size, size_t nmemb, string *outputString)
+size_t curlWriteToStringFunction(void *ptr, size_t size, size_t nmemb, std::string *outputString)
 {
     outputString->append(static_cast<char *>(ptr), size * nmemb);
     return size * nmemb;
@@ -63,7 +63,7 @@ int progress_func(void *ptr, double TotalToDownload, double NowDownloaded, doubl
     return 0;
 }
 
-string downloadToString(string url, std::string name)
+std::string downloadToString(std::string url, std::string name)
 {
     std::string outputString;
 
@@ -98,25 +98,27 @@ string downloadToString(string url, std::string name)
 
         if (res != CURLE_OK)
         {
-            fprintf(stderr, string("Downloading repo, \"" + name + "\" failed: %s\n").c_str(), curl_easy_strerror(res));
+            fprintf(stderr, std::string("Downloading repo, \"" + name + "\" failed: %s\n").c_str(), curl_easy_strerror(res));
         }
 
         curl_easy_cleanup(curl);
     }
 
+    std::cout << std::endl;
+
     return outputString;
 }
 
-int downloadToFile(string url, string name, string type)
+int downloadToFile(std::string url, std::string name, std::string type)
 {
-    string filePathFolder = getBaseDir() + "/" + type;
+    std::string filePathFolder = getBaseDir() + "/" + type;
 
-    if (!(filesystem::exists(filePathFolder)))
+    if (!(std::filesystem::exists(filePathFolder)))
     {
-        filesystem::create_directories(filePathFolder);
+        std::filesystem::create_directories(filePathFolder);
     }
 
-    string filePath = filePathFolder + "/" + name + url.substr(url.find_last_of("."));
+    std::string filePath = filePathFolder + "/" + name + url.substr(url.find_last_of("."));
 
     CURL *curl;
     static const char *pagefilename = filePath.c_str();
@@ -163,7 +165,7 @@ int downloadToFile(string url, string name, string type)
 
         if (res != CURLE_OK)
         {
-            fprintf(stderr, string("Downloading file, \"" + name + "\" failed: %s\n").c_str(), curl_easy_strerror(res));
+            fprintf(stderr, std::string("Downloading file, \"" + name + "\" failed: %s\n").c_str(), curl_easy_strerror(res));
         }
 
         //close file

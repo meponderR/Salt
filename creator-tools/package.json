@@ -1,0 +1,16 @@
+{
+    "name": "gapt-tools",
+    "version": "1.0.0",
+    "description": "Tools for the gapt framework.",
+    "main": "scrape.js",
+    "dependencies": {
+        "decode-uri-component": "^0.2.0",
+        "prompt-sync": "^4.2.0"
+    },
+    "devDependencies": {},
+    "scripts": {
+        "format": "node scrape"
+    },
+    "author": "meponder",
+    "license": "MIT"
+}

@@ -6,8 +6,10 @@ files/
 
 
 # creator tools
+creator-tools/.vscode
+creator-tools/node_modules
 creator-tools/out
-
+creator-tools/in
 
 # node
 nodejs/.vscode

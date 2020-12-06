@@ -9,7 +9,7 @@ using json = nlohmann::json;
 
 namespace gaptToolkit
 {
-    json getJsonFileList(std::string platform)
+    json getFullGameList()
     {
         json repoList = getJsonRepoList(true);
         json gameList = {};
@@ -27,40 +27,28 @@ namespace gaptToolkit
 
             json repoData = json::parse(repoString.c_str());
 
-            gameList.merge_patch(repoData);
-        }
+            json repoGames = repoData["games"];
 
-        json platformedGameList = gameList[platform];
-        return platformedGameList;
-    };
-    
-    json getFullJsonFileList()
-    {
-        json repoList = getJsonRepoList(true);
-        json gameList = {};
-
-        for (auto &repo : repoList.items())
-        {
-            json repoInfo = repo.value();
-
-            //std::cout << repoInfo.dump(4);
-
-            std::string repoURL = repoInfo["url"];
-            //std::cout << repoURL;
-
-            std::string repoString = downloadToString(repoURL, repo.key());
-
-            json repoData = json::parse(repoString.c_str());
-
-            gameList.merge_patch(repoData);
+            gameList.merge_patch(repoGames);
         }
 
         return gameList;
     };
 
+    json getGameList(std::string platform)
+    {
+        json repoList = getJsonRepoList(true);
+        json gameList = getFullGameList();
+
+        json platformedGameList = gameList[platform];
+        return platformedGameList;
+    };
+
+
+    //caching
     int cacheFileList()
     {
-        json cacheJson = getFullJsonFileList();
+        json cacheJson = getFullGameList();
         std::ofstream cacheFile(getGAPTSettingsPath() + "cache.json");
         cacheFile << std::setw(4) << cacheJson << std::endl;
         cacheFile.close();
@@ -68,7 +56,7 @@ namespace gaptToolkit
         return 0;
     }
 
-    json getCachedFileList()
+    json getCachedGameList()
     {
         std::ifstream cacheFile(getGAPTSettingsPath() + "cache.json");
         json cacheJson = json::parse(cacheFile);
@@ -77,12 +65,15 @@ namespace gaptToolkit
         return cacheJson;
     }
 
-    int downloadFile(std::string platform, std::string name)
+    json getCachedPlatformedGameList(std::string type)
     {
-        json repos = getCachedFileList();
-        json repo = repos[platform];
-        string fileUrl = repo[name];
+        return getCachedGameList()[type];
+    }
 
-        return downloadToFile(fileUrl, name, platform);
+    int downloadFile(std::string type, std::string name)
+    {
+        json games = getCachedPlatformedGameList(type);
+        std::string fileUrl = games[name]["url"];
+        return downloadToFile(fileUrl, name, type);
     };
 }; // namespace gaptToolkit
