@@ -51,6 +51,7 @@ jobs:
       
       - name: Install dependecies
         run: |
+          mkdir build
           sudo apt install libcurl4-openssl-dev
         shell: bash
         working-directory: ./C++/
