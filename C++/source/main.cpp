@@ -123,7 +123,6 @@ int main(int argc, char *argv[])
 	//download file
 	else if (string(argv[1]) == "get")
 	{
-		cout << "geting file" << endl;
 		gaptToolkit::downloadFile(argv[2], argv[3]);
 	}
 
@@ -132,8 +131,6 @@ int main(int argc, char *argv[])
 	{
 		if (string(argv[2]) == "info")
 		{
-			removeGaptRepo(argv[3]);
-			gaptToolkit::cacheFileList();
 		}
 		else if (string(argv[2]) == "add")
 		{

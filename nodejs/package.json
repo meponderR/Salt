@@ -1,0 +1,39 @@
+{
+  "name": "salt-js",
+  "version": "1.0.0",
+  "description": "An modern way to easily download files.",
+  "main": "main.js",
+  "scripts": {
+    "start": "node ./main.js",
+    "build": "node ./BuildExecutables.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meponderR/Salt.git"
+  },
+  "author": "meponder",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/meponderR/Salt/issues"
+  },
+  "homepage": "https://github.com/meponderR/Salt/nodejs#readme",
+  "devDependencies": {
+    "eslint": "latest",
+    "nexe": "latest"
+  },
+  "dependencies": {
+    "basic-ftp": "latest",
+    "fs-extra": "latest",
+    "glob": "latest",
+    "got": "latest",
+    "jsonc": "latest",
+    "lunr": "latest",
+    "readline-sync": "^1.4.10",
+    "sftp-promises": "latest",
+    "tar": "latest"
+  },
+  "bin": {
+    "salt": "./main.js"
+  }
+}
