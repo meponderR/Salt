@@ -1,6 +1,6 @@
 {
   "name": "salt-nodejs",
-  "version": "1.1.0",
+  "version": "1.0.2",
   "description": "An modern way to easily download files.",
   "main": "main.js",
   "scripts": {
