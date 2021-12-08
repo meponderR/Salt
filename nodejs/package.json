@@ -1,6 +1,6 @@
 {
-  "name": "salt-js",
-  "version": "1.0.0",
+  "name": "salt-nodejs",
+  "version": "1.0.1",
   "description": "An modern way to easily download files.",
   "main": "main.js",
   "scripts": {
@@ -29,7 +29,7 @@
     "got": "latest",
     "jsonc": "latest",
     "lunr": "latest",
-    "readline-sync": "^1.4.10",
+    "readline-sync": "latest",
     "sftp-promises": "latest",
     "tar": "latest"
   },

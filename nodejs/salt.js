@@ -36,7 +36,7 @@
 const fs = require("fs-extra");
 const path = require("path");
 const got = require("got");
-const sftpClient = require("sftp-promises");
+//const sftpClient = require("sftp-promises");
 const ftp = require("basic-ftp");
 const jsonc = require("jsonc").jsonc;
 const lunr = require("lunr");
@@ -337,7 +337,7 @@ async function makeRequest(repoURL, file = null) {
             console.log(err);
         }
         return downloaded;
-    } else if (repoURL.protocol == "sftp:") {
+    } /*else if (repoURL.protocol == "sftp:") {
         let port = 22;
         if (repoURL.port != "") {
             port = repoURL.port;
@@ -354,7 +354,7 @@ async function makeRequest(repoURL, file = null) {
         } else {
             return await sftp.getBuffer(repoURL.pathname.substring(1));
         }
-    } else if (repoURL.protocol == "file:") {
+    } */else if (repoURL.protocol == "file:") {
         if (file == null) {
             return await fs.promises.readFile(decodeURI(repoURL.pathname).substring(1));
         } else {
