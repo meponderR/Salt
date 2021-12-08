@@ -286,8 +286,10 @@ async function removeRepository(id) {
 //Download
 //Make a request to a source and return the body
 async function makeRequest(repoURL, file = null) {
-
     //console.log(`Making a request with ${RepoURL} using protocol ${RepoURL.protocol}`);
+
+    //Make sure url is of URL type
+    repoURL = new URL(repoURL);
 
     if (repoURL.protocol == "http:" || repoURL.protocol == "https:") {
         try {
@@ -337,24 +339,26 @@ async function makeRequest(repoURL, file = null) {
             console.log(err);
         }
         return downloaded;
-    } /*else if (repoURL.protocol == "sftp:") {
-        let port = 22;
-        if (repoURL.port != "") {
-            port = repoURL.port;
-        }
+    }
+    /*else if (repoURL.protocol == "sftp:") {
+           let port = 22;
+           if (repoURL.port != "") {
+               port = repoURL.port;
+           }
 
-        let sftp = new sftpClient({
-            host: repoURL.hostname,
-            port,
-            username: repoURL.username,
-            password: repoURL.password,
-        });
-        if (file != null) {
-            await sftp.get(repoURL.pathname.substring(1), file);
-        } else {
-            return await sftp.getBuffer(repoURL.pathname.substring(1));
-        }
-    } */else if (repoURL.protocol == "file:") {
+           let sftp = new sftpClient({
+               host: repoURL.hostname,
+               port,
+               username: repoURL.username,
+               password: repoURL.password,
+           });
+           if (file != null) {
+               await sftp.get(repoURL.pathname.substring(1), file);
+           } else {
+               return await sftp.getBuffer(repoURL.pathname.substring(1));
+           }
+       } */
+    else if (repoURL.protocol == "file:") {
         if (file == null) {
             return await fs.promises.readFile(decodeURI(repoURL.pathname).substring(1));
         } else {
@@ -363,9 +367,19 @@ async function makeRequest(repoURL, file = null) {
     } else {
         //console.log(`URL: ${repoURL}`);
         //console.log(`URL Protocol: ${repoURL.protocol}`);
-        //console.log(`Extension Handler: ${await lookupExtensionHandler(repoURL.protocol)}`);
+        //console.log(`Extension Handler: ${await lookupProtocol(repoURL.protocol)}`);
         //console.log(repoURL.protocol);
-        return await require(await lookupProtocol(repoURL.protocol)).handleUrl(repoURL, file);
+        if (await lookupProtocol(repoURL.protocol) == null) {
+            console.log("No extension handler found for this protocol");
+            return null;
+        } else {
+            try {
+                return await require(await lookupProtocol(repoURL.protocol)).handleUrl(repoURL, file);
+            } catch (error) {
+                console.log(error);
+                return null;
+            }
+        }
     }
 }
 
@@ -378,13 +392,18 @@ async function download(id, options = {
     //Get the file from the list
     let fileInfo = fileList[id];
     //Get the file from the url using makeRequest
-    await makeRequest(new URL(fileInfo.URL), `${getOutputDir()}/${fileInfo["Filename"]}`);
+    let request = await makeRequest(new URL(fileInfo.URL), `${getOutputDir()}/${fileInfo["Filename"]}`);
+    if (request == null) {
+        return 1;
+    }
+    //Check if Extensions are enabled
     if (options.noExtensions) {
-        //console.log("File Download Done!");
-        return;
+        return 0;
     }
     outputExtension(`${getOutputDir()}/${fileInfo["Filename"]}`, getOutputDir());
+
     //console.log("File Download Done!");
+    return 0;
 }
 
 //Download a file from a repository
@@ -433,12 +452,13 @@ async function lookupProtocol(protocol) {
     for (const Extension in Extensions) {
         if (Object.hasOwnProperty.call(Extensions, Extension)) {
             const ExtensionMetadata = Extensions[Extension];
-            for (const downloadProtocol of ExtensionMetadata.downloadProtocols) {
-                if (downloadProtocol == protocol) {
-                    return `${getSaltExtensionDir()}${Extension}/${ExtensionMetadata["handler"]}`;
+            if (ExtensionMetadata.downloadProtocols != null) {
+                for (const downloadProtocol of ExtensionMetadata.downloadProtocols) {
+                    if (downloadProtocol == protocol) {
+                        return `${getSaltExtensionDir()}${Extension}/${ExtensionMetadata["handler"]}`;
+                    }
                 }
             }
-
         }
     }
 }
